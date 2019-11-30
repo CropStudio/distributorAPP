@@ -81,10 +81,9 @@ export default {
       this.$axios
         .post('users/signin')
         .then(res => {
-          if (res.data.err) {
-            this.showNotif(res.data.msg, 'negative')
+          if (!res.data.status) {
+            this.$showNotif(res.data.message, 'negative')
           } else {
-            console.log(res.data)
             let data = res.data.result
             let dataUser = {
               _id: data._id,
@@ -93,20 +92,18 @@ export default {
             this.$q.localStorage.set('user', res.data.result.token)
             this.$q.localStorage.set('username', this.username)
             this.$q.localStorage.set('dataUser', dataUser)
-            this.$router.push({ name: 'dashboard' })
+            if (data.role === 'kios') {
+              this.$q.localStorage.set('role', 'kios')
+              this.$router.push({ name: 'Dashboard Kios' })
+            } else {
+              this.$q.localStorage.set('role', 'distributor')
+              this.$router.push({ name: 'Dashboard Distributor' })
+            }
           }
         })
         .catch((err) => {
-          this.showNotif(err.toString(), 'negative')
+          this.$showNotif(err.toString(), 'negative')
         })
-    },
-    showNotif (message, jenis) {
-      this.$q.notify({
-        message: message,
-        color: jenis,
-        timeout: 2000,
-        actions: [{ icon: 'close', color: 'white' }]
-      })
     },
     simulateProgress () {
       this.loading = true

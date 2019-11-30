@@ -43,7 +43,7 @@
       <q-list class="text-white">
         <q-item-label header class="bg-white">
           <!-- <q-img src="statics/title-icon.png" style="width: 40%;"></q-img> -->
-          Distributor - admin
+          Kios
         </q-item-label>
         <q-item-label class="text-white" header>Menu</q-item-label>
         <q-item clickable :to="{ name: 'dashboard' }" exact>
@@ -52,6 +52,14 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Dashboard</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'databarang' }" exact>
+          <q-item-section avatar>
+            <q-icon name="fas fa-table" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Data Barang</q-item-label>
           </q-item-section>
         </q-item>
         <q-item clickable :to="{ name: 'formbarang' }" exact>

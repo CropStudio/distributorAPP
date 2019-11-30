@@ -5,30 +5,29 @@ const routes = [
     path: '/login',
     component: () => import('pages/guest/Login.vue')
   },
-  {
-    path: '/admin/',
-    component: () => import('layouts/admin/MasterLayout.vue'),
-    children: [
-      { path: 'dashboard', name: 'dashboard', component: () => import('pages/admin/Index.vue') },
-      { path: 'form', name: 'formbarang', component: () => import('pages/admin/FormDataBarang.vue') },
-      { path: 'edit/:id', name: 'formEditBarang', component: () => import('pages/admin/FormEditDataBarang.vue') }
-    ],
-    requiredAuth: true
-  },
   // main / core app
   {
-    path: '/',
-    component: () => import('layouts/distributor/MyLayout.vue'),
+    path: '/distributor/',
+    component: () => import('layouts/distributor/MasterLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/main/Index.vue') }
-    ]
+      { path: '', name: 'Dashboard Distributor', component: () => import('pages/distributor/Index.vue') },
+      { path: 'databarang', name: 'databarang', component: () => import('pages/distributor/DataBarang.vue') },
+      { path: 'form', name: 'formbarang', component: () => import('pages/distributor/FormDataBarang.vue') },
+      { path: 'edit/:id', name: 'formEditBarang', component: () => import('pages/distributor/FormEditDataBarang.vue') }
+    ],
+    meta: {
+      requiredDistributor: true
+    }
   },
   {
-    path: '/addstok',
-    component: () => import('layouts/distributor/MyLayout.vue'),
+    path: '/kios/',
+    component: () => import('layouts/kios/MasterLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/main/AddStok.vue') }
-    ]
+      { path: '', name: 'Dashboard Kios', component: () => import('pages/kios/Index.vue') }
+    ],
+    meta: {
+      requiredKios: true
+    }
   }
 ]
 

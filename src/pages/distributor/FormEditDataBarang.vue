@@ -124,7 +124,7 @@ export default {
             this.$showNotif(res.data.message, 'negative')
           } else {
             this.$showNotif(res.data.message, 'positive')
-            this.$router.push({ name: 'dashboard' })
+            this.$router.push({ name: 'databarang' })
           }
         })
     },

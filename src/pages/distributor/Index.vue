@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="row justify-between">
           <div class="col-md-3 col-xs-12 text-blue-grey-14">
-            <div class="text-h6">Tabel Data Barang</div>
+            <div class="text-h6">Tabel Data RUT</div>
           </div>
           <div class="col-md-3 col-xs-12 text-blue-grey-14">
             <q-input borderless v-model="filter" placeholder="Search">
@@ -28,32 +28,15 @@
         >
           <template v-slot:body="props">
             <q-tr :props="props">
-              <q-td key="namaBarang" :props="props">{{ props.row.namaBarang }}</q-td>
-              <q-td key="harga" :props="props">{{ props.row.harga }}</q-td>
-              <q-td key="satuan" :props="props">{{ props.row.satuan }}</q-td>
-              <q-td key="kategori" :props="props">{{ props.row.kategori }}</q-td>
-              <q-td key="stok" :props="props">{{ props.row.stok }}</q-td>
-              <q-td key="keterangan" :props="props">{{ props.row.keterangan }}</q-td>
+              <q-td key="idTransaksi" :props="props">{{ props.row.idtransaksi }}</q-td>
+              <q-td key="nik" :props="props">{{ props.row.nik }}</q-td>
+              <q-td key="totalItem" :props="props">{{ hitungTotal(props.row.item) }}</q-td>
               <q-td key="action" :props="props">
                 <q-card-actions align="around" class="row q-col-gutter-md no-wrap">
                   <div class="col">
                     <q-btn round @click="openDetail(props.row)" color="secondary" icon="info">
                       <q-tooltip content-class="bg-blue-grey-14" transition-show="flip-right" transition-hide="flip-left" anchor="top middle" self="bottom middle" :offset="[10, 10]">
                         <div class="text-white text-caption">Lihat Detail</div>
-                      </q-tooltip>
-                    </q-btn>
-                  </div>
-                  <div class="col">
-                    <q-btn round color="primary" :to="`edit/`+props.row._id" icon="edit">
-                      <q-tooltip content-class="bg-blue-grey-14" transition-show="flip-right" transition-hide="flip-left" anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                        <div class="text-white text-caption">Edit Data</div>
-                      </q-tooltip>
-                    </q-btn>
-                  </div>
-                  <div class="col">
-                    <q-btn @click="confirm(props.row._id)" round color="negative" icon="close">
-                      <q-tooltip content-class="bg-blue-grey-14" transition-show="flip-right" transition-hide="flip-left" anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                        <div class="text-white text-caption">Hapus Data</div>
                       </q-tooltip>
                     </q-btn>
                   </div>
@@ -66,39 +49,58 @@
       </q-card-section>
     </q-card>
     <q-dialog v-model="detailDialog" v-if="detailDialog">
-      <q-card style="width: 400px; max-width: 60vw;">
-        <q-img :src="baseURL + activeData.foto" placeholder-src="statics/default-placeholder-1024x1024-570x321.png"/>
-
+      <q-card style="min-width: 40vw;" class="text-blue-grey-14">
         <q-card-section>
-          <q-btn
-            fab
-            :to="`edit/` + activeData._id"
-            color="primary"
-            icon="edit"
-            class="absolute"
-            style="top: 0; right: 12px; transform: translateY(-50%);"
-          />
-
-          <div class="row no-wrap items-center">
-            <div class="col text-h6 ellipsis">{{ activeData.namaBarang }}</div>
-            <div class="col-auto text-blue-grey-14 q-pt-md">
-              Rp {{ activeData.harga }},-
-            </div>
-          </div>
+          <div class="text-h6 q-ml-md">Detail Transaksi</div>
         </q-card-section>
 
+        <q-separator />
         <q-card-section>
-          <div class="text-subtitle1">{{ activeData.kategori }} ({{ activeData.stok + ' ' + activeData.satuan }})</div>
+          <q-list>
+            <q-item>
+              <q-item-section>
+                <div class="text-h6">{{ activeData.idtransaksi }}</div>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
+        <q-card-section style="max-height: 70vh" class="scroll">
+          <q-list>
+              <div v-for="(data, i) in activeData.item" :key="i">
+                <q-item>
+                  <q-item-section>
+                    <q-item-label>{{ data.namaBarang }}</q-item-label>
+                    <q-item-label caption>Rp. {{ data.harga }},-</q-item-label>
+                    <q-item-label caption>Qty. {{ data.qty }}</q-item-label>
+                  </q-item-section>
 
-        <q-card-section>
-          <div class="text-captions">{{ activeData.keterangan }}</div>
+                  <q-item-section side top>
+                    <q-item-label caption>Sub Total</q-item-label>
+                    <q-item-label>Rp. {{ hitungSubTotal(data.harga, data.qty) }},-</q-item-label>
+                  </q-item-section>
+
+                </q-item>
+                <q-separator spaced inset />
+              </div>
+              <q-item>
+                <q-item-section>
+                  <q-item-label>Total Keseluruhan</q-item-label>
+                  <q-item-label caption>Total Biaya Pada Transaksi Ini</q-item-label>
+                </q-item-section>
+
+                <q-item-section side top>
+                  <q-item-label caption>Sub Total</q-item-label>
+                  <q-item-label>Rp. {{ hitungTotalBiaya(activeData.item) }},-</q-item-label>
+                </q-item-section>
+
+              </q-item>
+          </q-list>
         </q-card-section>
 
         <q-separator />
 
         <q-card-actions align="right">
-          <q-btn flat v-close-popup>Close</q-btn>
+          <q-btn class="q-mr-md" unelevated color="blue-grey-10" label="Kirim"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -120,12 +122,9 @@ export default {
         rowsNumber: 10
       },
       columns: [
-        { name: 'namaBarang', align: 'center', label: 'Nama Barang', field: 'namaBarang' },
-        { name: 'harga', align: 'center', label: 'Harga', field: 'harga' },
-        { name: 'satuan', align: 'center', label: 'Satuan', field: 'satuan' },
-        { name: 'kategori', align: 'center', label: 'Kategori', field: 'kategori' },
-        { name: 'stok', align: 'center', label: 'Stok', field: 'stok' },
-        { name: 'keterangan', align: 'center', label: 'Keterangan', field: 'keterangan' },
+        { name: 'idTransaksi', align: 'left', label: 'Id Transaksi', field: 'idTransaksi' },
+        { name: 'nik', align: 'left', label: 'NIK', field: 'nik' },
+        { name: 'totalItem', align: 'left', label: 'Total Item', field: 'totalItem' },
         { name: 'action', align: 'center', label: 'Action', field: 'action' }
       ],
       data: [],
@@ -145,15 +144,41 @@ export default {
     })
   },
   methods: {
+    filterArr (data, id) {
+      return data.filter(res => {
+        return res.idtransaksi === id
+      })
+    },
     getData () {
       try {
-        this.$axios.get('barang', {
+        this.$axios.get('transaksi/distributor/' + this.$q.localStorage.getItem('dataUser')._id, {
           headers: this.$createToken().token
         })
           .then(res => {
-            this.original = res.data.result
-          }).catch(error => {
-            console.log(error)
+            console.log(res)
+            if (res.data.result <= 0 || res.data.result === undefined) {
+              this.data = []
+              this.$showNotif(res.data.message, 'yellow-10')
+            } else {
+              let data = res.data.result
+              let newData = []
+
+              for (let index = 0; index < data.length; index++) {
+                if (this.filterArr(newData, data[index].idtransaksi).length < 1) {
+                  data[index].item = [data[index].item]
+                  newData.push(data[index])
+                } else {
+                  for (let i = 0; i < newData.length; i++) {
+                    if (newData[i].idtransaksi === data[index].idtransaksi) {
+                      newData[i].item.push(data[index].item)
+                    }
+                  }
+                }
+              }
+              this.original = newData
+            }
+          }).catch(() => {
+            this.$showNotif('Terjadi Kesalahan Pada Server', 'negative')
           })
       } catch (error) {
         console.log(error)
@@ -282,6 +307,19 @@ export default {
         .onCancel(() => {
           console.log('>>>> Cancel')
         })
+    },
+    hitungTotal (data) {
+      return data.length
+    },
+    hitungTotalBiaya (data) {
+      let total = 0
+      for (let i = 0; i < data.length; i++) {
+        total += Number(data[i].harga) * Number(data[i].qty)
+      }
+      return total
+    },
+    hitungSubTotal (harga, qty) {
+      return Number(harga) * Number(qty)
     }
   }
 }

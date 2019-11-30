@@ -23,15 +23,29 @@ export default function (/* { store, ssrContext } */) {
   })
 
   Router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiredAuth)) {
-      if (LocalStorage.getItem('user') === null || LocalStorage.getItem('user') === undefined) {
+    if (to.matched.some(record => record.meta.requiredDistributor)) {
+      if (LocalStorage.getItem('user') === null || LocalStorage.getItem('user') === undefined | LocalStorage.getItem('role') !== 'distributor') {
         next({
           path: '/login'
         })
         Notify.create({
           icon: 'ion-close',
           color: 'negative',
-          message: 'Anda Belum Login',
+          message: 'Anda Belum Login Sebagai Distributor',
+          actions: [{ icon: 'close', color: 'white' }]
+        })
+      } else {
+        next()
+      }
+    } else if (to.matched.some(record => record.meta.requiredKios)) {
+      if (LocalStorage.getItem('user') === null || LocalStorage.getItem('user') === undefined | LocalStorage.getItem('role') !== 'kios') {
+        next({
+          path: '/login'
+        })
+        Notify.create({
+          icon: 'ion-close',
+          color: 'negative',
+          message: 'Anda Belum Login Sebagai Kios',
           actions: [{ icon: 'close', color: 'white' }]
         })
       } else {

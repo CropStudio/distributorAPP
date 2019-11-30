@@ -8,17 +8,19 @@
               <div class="col-md-6 col-xs-12 q-gutter-y-lg">
                 <div class="text-h6 text-weight-light">Input Data Barang</div>
                 <q-separator/>
-                <q-input label="Nama Barang" v-model="dataSend.namaBarang" filled></q-input>
+                <q-input :rules="[ val => val !== null || 'Mohon Isi Nama barang']" label="Nama Barang" v-model="dataSend.namaBarang" filled></q-input>
                 <q-select
                   :options="['Pupuk', 'Alat Tani', 'Benih']"
                   label="Pilih Kategori"
                   v-model="dataSend.kategori"
+                  :rules="[ val => val !== null || 'Mohon Pilih Kategori']"
                   filled
                 />
-                <q-input label="Harga Barang" type="number" prefix="Rp." v-model="dataSend.harga" filled></q-input>
+                <q-input :rules="[ val => val !== null || 'Mohon Isi Harga Barang']" label="Harga Barang" type="number" prefix="Rp." v-model="dataSend.harga" filled></q-input>
                 <q-select
                   :options="['Kg', 'Pcs']"
                   label="Pilih Satuan"
+                  :rules="[ val => val !== null || 'Mohon Pilih Satuan']"
                   v-model="dataSend.satuan"
                   filled
                 />
@@ -26,11 +28,14 @@
                 <q-input label="Keterangan" type="textarea" v-model="dataSend.keterangan" filled></q-input>
                 <div class="col">
                   <q-input
-                    @input="selectFile"
+                    @input="selectFile()"
                     filled
                     ref="file"
                     type="file"
                     hint="Upload Gambar Barang"
+                    error-message="Mohon Upload Gambar"
+                    :error="imageError"
+                    :autofocus="imageError"
                   />
                   <q-img v-if="!reseted" :src="linkPreview"></q-img>
                 </div>
@@ -59,7 +64,8 @@ export default {
       },
       linkPreview: '',
       foto: '',
-      reseted: true
+      reseted: true,
+      imageError: false
     }
   },
   methods: {
@@ -77,20 +83,24 @@ export default {
       this.reseted = true
     },
     onSubmit () {
-      const formData = new FormData()
-      formData.append('foto', this.foto)
-      formData.append('data', JSON.stringify(Object.assign(this.dataSend, this.$createToken().distributor)))
-      this.$axios.post('barang', formData, {
-        headers: this.$createToken().token
-      })
-        .then(res => {
-          if (res.data.error) {
-            this.$showNotif(res.data.message, 'negative')
-          } else {
-            this.$showNotif(res.data.message, 'positive')
-            this.reset()
-          }
+      if (this.foto === '') {
+        this.imageError = true
+      } else {
+        const formData = new FormData()
+        formData.append('foto', this.foto)
+        formData.append('data', JSON.stringify(Object.assign(this.dataSend, this.$createToken().distributor)))
+        this.$axios.post('barang', formData, {
+          headers: this.$createToken().token
         })
+          .then(res => {
+            if (res.data.error) {
+              this.$showNotif(res.data.message, 'negative')
+            } else {
+              this.$showNotif(res.data.message, 'positive')
+              this.$router.push({ name: 'databarang' })
+            }
+          })
+      }
     },
     selectFile () {
       event.preventDefault()

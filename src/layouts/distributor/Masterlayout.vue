@@ -43,10 +43,10 @@
       <q-list class="text-white">
         <q-item-label header class="bg-white">
           <!-- <q-img src="statics/title-icon.png" style="width: 40%;"></q-img> -->
-          Distributor - gudang
+          Distributor - admin
         </q-item-label>
         <q-item-label class="text-white" header>Menu</q-item-label>
-        <q-item clickable to="/" exact>
+        <q-item clickable :to="{ name: 'Dashboard Distributor' }" exact>
           <q-item-section avatar>
             <q-icon name="fas fa-tachometer-alt" />
           </q-item-section>
@@ -54,12 +54,20 @@
             <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable to="/addstok" exact>
+        <q-item clickable :to="{ name: 'databarang' }" exact>
+          <q-item-section avatar>
+            <q-icon name="fas fa-table" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Data Barang</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable :to="{ name: 'formbarang' }" exact>
           <q-item-section avatar>
             <q-icon name="fas fa-plus-circle" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Tambah Stok</q-item-label>
+            <q-item-label>Tambah Barang</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item
